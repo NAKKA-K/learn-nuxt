@@ -1,38 +1,32 @@
 <template>
   <section class="container">
     <div>
-      <h3>Nuxt.jsのタグがつけられた投稿の一覧</h3>
-      <ul>
-        <li v-for="item in items" :key="item.id">
-          <h4>
-            <span>{{item.title}}</span>
-            <small>
-              <span>by </span>
-              <nuxt-link :to="`/users/${item.user.id}`">{{item.user.id}}</nuxt-link>
-            </small>
-          </h4>
-
-          <div>{{item.body.slice(0, 130)}}......</div>
-          <p><a :href="item.url">{{item.url}}</a></p>
-        </li>
-      </ul>
+      <h1>Index page</h1>
     </div>
+
+    <ul>
+      <li>
+        <nuxt-link to='/login'>ログインページへ</nuxt-link>
+      </li>
+      <li>
+        <nuxt-link to='/authed-route'>認証が必要なページ</nuxt-link>
+      </li>
+    </ul>
   </section>
 </template>
 
 <script>
-import AppLogo from '~/components/AppLogo.vue'
+import { mapGetters } from 'vuex'
 
 export default {
-  components: {
-    AppLogo
-  },
-
-  async asyncData({ app }) {
-    const items = await app.$axios.$get('http://qiita.com/api/v2/items?query=tag:nuxt.js')
-    return {
-      items
+  async asyncData({ store }) {
+    if(store.getters['items'].length) {
+      return
     }
+    await store.dispatch('fetchItems')
+  },
+  computed: {
+    ...mapGetters(['items'])
   }
 }
 </script>
